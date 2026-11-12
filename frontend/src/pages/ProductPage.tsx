@@ -10,7 +10,11 @@ import {
   CheckCircle2,
   X,
   Search,
+  Box,
+  Eye,
+  Sparkles,
 } from 'lucide-react';
+import { Product3DViewer } from '../components/3d/Product3DViewer';
 import { api } from '../services/api';
 import { Product } from '../types';
 import { useToast } from '../components/ui/Toast';
@@ -23,6 +27,7 @@ export const ProductPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [comparisonList, setComparisonList] = useState<Product[]>([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
+  const [selectedProduct3D, setSelectedProduct3D] = useState<Product | null>(null);
 
   const loadProducts = async () => {
     setLoading(true);
@@ -208,6 +213,15 @@ export const ProductPage: React.FC = () => {
               {/* Action Buttons */}
               <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
                 <button
+                  onClick={() => setSelectedProduct3D(p)}
+                  className="px-3 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/40 text-cyan-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                  title="Inspect in 3D Holographic Viewer"
+                >
+                  <Box className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>3D View</span>
+                </button>
+
+                <button
                   onClick={() => toggleCompare(p)}
                   className={`flex-1 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                     isComparing
@@ -316,6 +330,88 @@ export const ProductPage: React.FC = () => {
               >
                 Close Comparison
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. DEDICATED 3D PRODUCT INSPECTION MODAL */}
+      {selectedProduct3D && (
+        <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl glass-panel border border-cyan-400/50 shadow-2xl p-6 bg-[#050814]/95 space-y-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-[#111B35] text-cyan-400 border border-slate-700">
+                  {selectedProduct3D.category}
+                </span>
+                <h3 className="text-2xl font-black text-white mt-1.5 flex items-center gap-2">
+                  <Box className="w-5 h-5 text-cyan-400" />
+                  {selectedProduct3D.name}
+                </h3>
+                <div className="text-xs text-slate-400 mt-0.5">by {selectedProduct3D.brand} • ${selectedProduct3D.price} USD</div>
+              </div>
+              <button
+                onClick={() => setSelectedProduct3D(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* 3D Visualizer Canvas */}
+            <Product3DViewer
+              productName={selectedProduct3D.name}
+              category={selectedProduct3D.category}
+              specs={selectedProduct3D.specs}
+              className="h-[380px]"
+            />
+
+            {/* Specs & Sentiment Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-[#111B35]/60 border border-slate-800 space-y-2">
+                <div className="text-xs font-bold text-white uppercase tracking-wider text-cyan-400">
+                  Hardware Specifications
+                </div>
+                <div className="space-y-1 text-xs">
+                  {Object.entries(selectedProduct3D.specs).map(([k, v]) => (
+                    <div key={k} className="flex justify-between border-b border-slate-800/60 py-1">
+                      <span className="text-slate-400">{k}:</span>
+                      <span className="text-white font-medium">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#111B35]/60 border border-slate-800 space-y-2">
+                <div className="text-xs font-bold text-white uppercase tracking-wider text-violet-400">
+                  Consumer Review Telemetry
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Rating:</span>
+                    <span className="text-amber-400 font-bold font-mono">★ {selectedProduct3D.rating} / 5.0</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Reviews Analyzed:</span>
+                    <span className="text-white font-mono">{selectedProduct3D.review_count.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Growth Velocity:</span>
+                    <span className="text-emerald-400 font-bold font-mono">+{selectedProduct3D.growth_rate}%</span>
+                  </div>
+                  <div className="pt-2">
+                    <a
+                      href={selectedProduct3D.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-cyan-300 border border-blue-500/40 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <span>Verify Public Product Registry</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

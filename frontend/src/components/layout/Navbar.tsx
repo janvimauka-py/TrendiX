@@ -13,6 +13,7 @@ import {
   ExternalLink,
   Sparkles,
   Menu,
+  Palette,
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useToast } from '../ui/Toast';
@@ -46,7 +47,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [currentPalette, setCurrentPalette] = useState<'cyber' | 'magenta' | 'emerald' | 'amber'>('cyber');
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Apply palette theme to root document
+  const handleSelectPalette = (palette: 'cyber' | 'magenta' | 'emerald' | 'amber') => {
+    setCurrentPalette(palette);
+    if (palette === 'cyber') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', palette);
+    }
+    showToast('Theme Palette Applied', `Switched theme to ${palette.toUpperCase()} futuristic radiance`, 'success');
+  };
 
   // Load notifications
   const loadNotifications = async () => {
@@ -185,6 +199,64 @@ export const Navbar: React.FC<NavbarProps> = ({
           <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
           <span className="hidden md:inline">{isRefreshing ? 'Ingesting...' : 'Sync Live'}</span>
         </button>
+
+        {/* Futuristic Color Palette Selector */}
+        <div className="relative">
+          <button
+            onClick={() => setShowThemeMenu(!showThemeMenu)}
+            title="Change Futuristic Color Theme"
+            className="p-2 rounded-xl bg-[#111B35]/70 border border-slate-700/60 hover:border-cyan-400 text-slate-300 hover:text-white transition-all flex items-center gap-1"
+          >
+            <Palette className="w-4 h-4 text-cyan-400" />
+            <span
+              className={`w-2 h-2 rounded-full ${
+                currentPalette === 'cyber'
+                  ? 'bg-cyan-400'
+                  : currentPalette === 'magenta'
+                  ? 'bg-pink-500'
+                  : currentPalette === 'emerald'
+                  ? 'bg-emerald-400'
+                  : 'bg-amber-400'
+              }`}
+            />
+          </button>
+
+          {showThemeMenu && (
+            <div className="absolute right-0 mt-2 w-52 rounded-2xl glass-panel border border-cyan-500/40 shadow-2xl p-2 z-50 bg-[#080D1C]/95 animate-in fade-in">
+              <div className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                Futuristic Color Themes
+              </div>
+              <div className="py-1 space-y-1">
+                {[
+                  { id: 'cyber', label: 'Cosmic Cyan', color: 'bg-cyan-400', desc: 'Obsidian & Electric Cyan' },
+                  { id: 'magenta', label: 'Neon Genesis', color: 'bg-pink-500', desc: 'Cyberpunk Pink & Violet' },
+                  { id: 'emerald', label: 'Matrix Quantum', color: 'bg-emerald-400', desc: 'Quantum Mint & Emerald' },
+                  { id: 'amber', label: 'Solar Flare', color: 'bg-amber-400', desc: 'Luminous Gold & Flame' },
+                ].map((th) => (
+                  <button
+                    key={th.id}
+                    onClick={() => {
+                      handleSelectPalette(th.id as any);
+                      setShowThemeMenu(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-left transition-all ${
+                      currentPalette === th.id
+                        ? 'bg-blue-600/20 text-white font-semibold border border-cyan-500/40'
+                        : 'text-slate-300 hover:bg-[#111B35] hover:text-white'
+                    }`}
+                  >
+                    <span className={`w-3 h-3 rounded-full ${th.color} shrink-0 shadow`} />
+                    <div className="flex-1 truncate">
+                      <div>{th.label}</div>
+                      <div className="text-[10px] text-slate-400">{th.desc}</div>
+                    </div>
+                    {currentPalette === th.id && <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Theme Toggle (Light / Dark) */}
         <button

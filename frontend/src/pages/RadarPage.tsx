@@ -12,8 +12,10 @@ import {
   AlertTriangle,
   X,
   Sparkles,
+  Box,
 } from 'lucide-react';
 import { RadarVisualizer } from '../components/3d/RadarVisualizer';
+import { Product3DViewer } from '../components/3d/Product3DViewer';
 import { api } from '../services/api';
 import { Trend, RadarPoint } from '../types';
 import { useToast } from '../components/ui/Toast';
@@ -306,9 +308,10 @@ export const RadarPage: React.FC<RadarPageProps> = ({ onNavigatePage }) => {
                     </span>
                     <button
                       onClick={() => setSelectedTrend(t)}
-                      className="text-cyan-400 hover:text-cyan-300 font-semibold"
+                      className="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/40 text-cyan-300 font-semibold flex items-center gap-1 transition-all"
                     >
-                      Inspect Details →
+                      <Box className="w-3 h-3 text-cyan-400" />
+                      <span>3D View & Details</span>
                     </button>
                   </div>
                 </div>
@@ -340,6 +343,22 @@ export const RadarPage: React.FC<RadarPageProps> = ({ onNavigatePage }) => {
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* 3D Interactive Product Visualizer */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-white flex items-center gap-1.5">
+                  <Box className="w-4 h-4 text-cyan-400" />
+                  Interactive 3D Product & Signal Geometry
+                </span>
+                <span className="text-[10px] font-mono text-cyan-400">Orbit 360° • Wireframe Mode</span>
+              </div>
+              <Product3DViewer
+                productName={selectedTrend.name}
+                category={selectedTrend.category}
+                className="h-[300px]"
+              />
             </div>
 
             {/* Qualitative Drivers */}

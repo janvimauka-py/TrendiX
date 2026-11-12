@@ -12,8 +12,10 @@ import {
   Search,
   Radio,
   FileSpreadsheet,
+  Box,
 } from 'lucide-react';
 import { Globe3D } from '../components/3d/Globe3D';
+import { Product3DViewer } from '../components/3d/Product3DViewer';
 import { api } from '../services/api';
 import { Trend, DataSourceStatus } from '../types';
 
@@ -22,10 +24,50 @@ interface HomePageProps {
   onSelectTrend: (trend: Trend) => void;
 }
 
+interface Featured3DItem {
+  name: string;
+  category: string;
+  desc: string;
+  specs: Record<string, string>;
+  growth: string;
+}
+
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onSelectTrend }) => {
   const [trends, setTrends] = useState<Trend[]>([]);
   const [sources, setSources] = useState<DataSourceStatus[]>([]);
   const [loading, setLoading] = useState(true);
+  const [active3DProductIdx, setActive3DProductIdx] = useState(0);
+
+  const featured3DItems: Featured3DItem[] = [
+    {
+      name: 'Zenith AI Neural Micro-PC',
+      category: 'Computers & AI',
+      desc: 'Dedicated on-device NPU running local quantized neural models without cloud latency.',
+      specs: { 'NPU Tops': '48 TOPS', 'RAM': '32GB LPDDR5X', 'Storage': '1TB NVMe Gen4' },
+      growth: '+142%',
+    },
+    {
+      name: 'AuraRing Horizon Titanium Gen-4',
+      category: 'Smart Wearables',
+      desc: 'Grade-5 titanium biometric ring with photodiode sensors tracking nocturnal HRV and temperature.',
+      specs: { 'Battery Life': '7 Days', 'Material': 'Grade 5 Titanium', 'Depth': '100m Waterproof' },
+      growth: '+86%',
+    },
+    {
+      name: 'PureAcoustics Studio ANC Buds',
+      category: 'Audio & Sound',
+      desc: 'Planar magnetic hybrid earbuds with adaptive sub-bass acoustic pressure chamber.',
+      specs: { 'ANC Noise Cancel': '48dB Hybrid', 'Driver': '11mm Planar', 'Playtime': '36 Hours' },
+      growth: '+34%',
+    },
+    {
+      name: 'OmniCharge 140W GaN Fast Dock',
+      category: 'Power Accessories',
+      desc: 'Gallium-nitride modular charging station with real-time OLED wattage readout.',
+      specs: { 'Architecture': 'GaN V-Fast', 'Ports': '3x USB-C + 1x USB-A', 'Display': 'OLED Wattage' },
+      growth: '+72%',
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -226,6 +268,68 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onSelectTrend })
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* 3.5. INTERACTIVE 3D PRODUCT & HARDWARE TELEMETRY SHOWCASE */}
+      <section className="p-6 md:p-8 rounded-3xl glass-panel border border-cyan-500/30 bg-[#050814]/90 space-y-6 shadow-2xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-cyan-400">
+              <Box className="w-3.5 h-3.5 text-cyan-400 animate-spin-slow" />
+              INTERACTIVE 3D PRODUCT TELEMETRY
+            </div>
+            <h3 className="text-2xl font-black text-white mt-1">Explore Trending Physical Hardware in 3D</h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Orbit, zoom, and inspect procedural 3D models with holographic wireframe analysis.
+            </p>
+          </div>
+
+          <button
+            onClick={() => onNavigate('products')}
+            className="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/50 text-xs font-semibold flex items-center gap-1.5 transition-all"
+          >
+            <span>View All Product SKUs</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Left: Product Selector Tabs */}
+          <div className="lg:col-span-5 space-y-2.5">
+            {featured3DItems.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={() => setActive3DProductIdx(idx)}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  active3DProductIdx === idx
+                    ? 'bg-[#111B35] border-cyan-400/70 shadow-lg shadow-cyan-500/20'
+                    : 'bg-[#111B35]/40 border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
+                    {item.category}
+                  </span>
+                  <span className="text-xs font-mono font-bold text-emerald-400">
+                    {item.growth}
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-white mt-1">{item.name}</h4>
+                <p className="text-xs text-slate-300 mt-1 line-clamp-1">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Right: Live Interactive 3D Viewer */}
+          <div className="lg:col-span-7">
+            <Product3DViewer
+              productName={featured3DItems[active3DProductIdx].name}
+              category={featured3DItems[active3DProductIdx].category}
+              specs={featured3DItems[active3DProductIdx].specs}
+              className="h-[380px]"
+            />
+          </div>
         </div>
       </section>
 

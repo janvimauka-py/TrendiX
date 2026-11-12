@@ -10,7 +10,10 @@ import {
   Copy,
   Check,
   RefreshCw,
+  Box,
+  X,
 } from 'lucide-react';
+import { Product3DViewer } from '../components/3d/Product3DViewer';
 import { api } from '../services/api';
 import { AIResponse } from '../types';
 import { useToast } from '../components/ui/Toast';
@@ -36,6 +39,7 @@ export const AssistantPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [active3DViewer, setActive3DViewer] = useState<{ name: string; category: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -180,15 +184,30 @@ export const AssistantPage: React.FC = () => {
                             {c.relevance} • Captured: {new Date(c.collected_at).toLocaleDateString()}
                           </span>
                         </div>
-                        <a
-                          href={c.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1 rounded-lg hover:bg-slate-800 text-cyan-400 shrink-0"
-                          title="Open Source Link"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            onClick={() =>
+                              setActive3DViewer({
+                                name: c.source_name,
+                                category: m.responseObj?.query_category || 'Technology',
+                              })
+                            }
+                            className="p-1 px-2 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 font-mono text-[10px] flex items-center gap-1 border border-cyan-400/30 transition-all"
+                            title="Inspect in 3D"
+                          >
+                            <Box className="w-3 h-3 text-cyan-400" />
+                            <span>3D</span>
+                          </button>
+                          <a
+                            href={c.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 rounded-lg hover:bg-slate-800 text-cyan-400 shrink-0"
+                            title="Open Source Link"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -244,6 +263,33 @@ export const AssistantPage: React.FC = () => {
           <Send className="w-4 h-4" />
         </button>
       </div>
+      {/* Floating 3D Product Telemetry Modal */}
+      {active3DViewer && (
+        <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-2xl rounded-3xl glass-panel border border-cyan-400/50 shadow-2xl p-6 bg-[#050814]/95 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
+                  {active3DViewer.category}
+                </span>
+                <h3 className="text-xl font-black text-white mt-0.5">{active3DViewer.name}</h3>
+              </div>
+              <button
+                onClick={() => setActive3DViewer(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <Product3DViewer
+              productName={active3DViewer.name}
+              category={active3DViewer.category}
+              className="h-[340px]"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
