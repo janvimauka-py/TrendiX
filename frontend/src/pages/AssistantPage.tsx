@@ -138,22 +138,20 @@ export const AssistantPage: React.FC = () => {
           >
             {/* Avatar */}
             <div
-              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold shadow ${
-                m.sender === 'assistant'
+              className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold shadow ${m.sender === 'assistant'
                   ? 'bg-gradient-to-tr from-violet-600 to-cyan-400 text-white'
                   : 'bg-blue-600 text-white'
-              }`}
+                }`}
             >
               {m.sender === 'assistant' ? <BrainCircuit className="w-4 h-4" /> : 'YOU'}
             </div>
 
             {/* Bubble */}
             <div
-              className={`max-w-2xl rounded-2xl p-4 sm:p-5 text-xs sm:text-sm space-y-3 shadow-md ${
-                m.sender === 'user'
+              className={`max-w-2xl rounded-2xl p-4 sm:p-5 text-xs sm:text-sm space-y-3 shadow-md ${m.sender === 'user'
                   ? 'bg-blue-600 text-white rounded-tr-none'
                   : 'bg-[#111B35]/80 text-slate-200 border border-slate-700/70 rounded-tl-none'
-              }`}
+                }`}
             >
               <div className="prose prose-invert prose-xs max-w-none leading-relaxed space-y-2">
                 {m.text.split('\n\n').map((paragraph, pIdx) => (

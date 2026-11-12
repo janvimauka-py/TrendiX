@@ -98,3 +98,4 @@ The web application will be live at `http://localhost:5173/`.
 ## 🛡️ Data Science & Ethics Guarantee
 
 All telemetry analyzed by TRENDIX is collected strictly from public internet signals and authorized feeds. The platform does not track individual private user activity or bypass authentication walls.
+
