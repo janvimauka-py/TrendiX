@@ -1,0 +1,326 @@
+import React, { useState, useEffect } from 'react';
+import {
+  ShoppingBag,
+  Star,
+  TrendingUp,
+  DollarSign,
+  Scale,
+  ExternalLink,
+  Layers,
+  CheckCircle2,
+  X,
+  Search,
+} from 'lucide-react';
+import { api } from '../services/api';
+import { Product } from '../types';
+import { useToast } from '../components/ui/Toast';
+
+export const ProductPage: React.FC = () => {
+  const { showToast } = useToast();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('popularity');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [comparisonList, setComparisonList] = useState<Product[]>([]);
+  const [showCompareModal, setShowCompareModal] = useState(false);
+
+  const loadProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await api.getProducts(sortBy);
+      setProducts(res.products);
+    } catch (e) {
+      console.error(e);
+      showToast('Error', 'Failed to load product intelligence', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, [sortBy]);
+
+  const toggleCompare = (product: Product) => {
+    if (comparisonList.some((p) => p.id === product.id)) {
+      setComparisonList((prev) => prev.filter((p) => p.id !== product.id));
+    } else {
+      if (comparisonList.length >= 3) {
+        showToast('Limit Reached', 'You can compare up to 3 products at a time', 'info');
+        return;
+      }
+      setComparisonList((prev) => [...prev, product]);
+    }
+  };
+
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-8 pb-16">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono bg-violet-500/10 text-violet-400 border border-violet-500/20 mb-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+            HARDWARE & CONSUMER SKU INTELLIGENCE
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Product Intelligence & Rankings
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Discover popular products, public pricing curves, sentiment breakdowns, and competitor matrices.
+          </p>
+        </div>
+
+        {/* Compare Drawer Trigger */}
+        {comparisonList.length > 0 && (
+          <button
+            onClick={() => setShowCompareModal(true)}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-all animate-bounce"
+          >
+            <Scale className="w-4 h-4" />
+            <span>Compare Selected ({comparisonList.length}/3)</span>
+          </button>
+        )}
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="p-4 rounded-2xl glass-panel border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="relative w-full sm:w-80">
+          <Search className="absolute left-3.5 top-2.5 w-4 h-4 text-cyan-400" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search products, brands, or categories..."
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#111B35]/80 border border-slate-700 text-xs text-white placeholder-slate-400 focus:border-cyan-400 outline-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <span className="text-xs text-slate-400 shrink-0">Sort By:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="p-2 rounded-xl bg-[#111B35] border border-slate-700 text-xs text-slate-200 focus:border-cyan-400 outline-none"
+          >
+            <option value="popularity">Popularity Index (High to Low)</option>
+            <option value="rating">Review Rating (High to Low)</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Product Catalog Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredProducts.map((p, idx) => {
+          const isComparing = comparisonList.some((c) => c.id === p.id);
+          return (
+            <div
+              key={p.id}
+              className="p-6 rounded-2xl glass-card border border-slate-800 hover:border-violet-500/40 transition-all space-y-5 flex flex-col justify-between relative group"
+            >
+              {/* Card Header & Rank */}
+              <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-lg bg-blue-600/20 text-cyan-400 font-mono text-xs font-bold flex items-center justify-center border border-blue-500/30">
+                      #{idx + 1}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-400">{p.brand}</span>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    +{p.growth_rate}%
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-bold text-white group-hover:text-violet-300 transition-colors">
+                    {p.name}
+                  </h4>
+                  <div className="text-xs text-slate-400 mt-0.5">{p.category}</div>
+                </div>
+
+                {/* Price & Rating */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                  <div>
+                    <div className="text-2xl font-black text-white font-mono">
+                      ${p.price.toFixed(2)}
+                    </div>
+                    <div className="text-[10px] text-slate-400">Public market price</div>
+                  </div>
+
+                  <div className="text-right">
+                    <div className="flex items-center gap-1 text-amber-400 font-mono text-sm font-bold justify-end">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <span>{p.rating}</span>
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-mono">
+                      {p.review_count.toLocaleString()} reviews
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sentiment Bar */}
+                <div className="space-y-1 pt-1">
+                  <div className="flex justify-between text-[11px] text-slate-400 font-mono">
+                    <span>Sentiment:</span>
+                    <span className="text-emerald-400 font-bold">{p.sentiment_breakdown.positive}% Pos</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden flex">
+                    <div
+                      style={{ width: `${p.sentiment_breakdown.positive}%` }}
+                      className="bg-emerald-400"
+                    />
+                    <div
+                      style={{ width: `${p.sentiment_breakdown.neutral}%` }}
+                      className="bg-slate-400"
+                    />
+                    <div
+                      style={{ width: `${p.sentiment_breakdown.negative}%` }}
+                      className="bg-rose-400"
+                    />
+                  </div>
+                </div>
+
+                {/* Key Technical Specs */}
+                <div className="p-3 rounded-xl bg-[#111B35]/60 border border-slate-800/80 space-y-1.5">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                    Verified Specifications
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                    {Object.entries(p.specs).slice(0, 4).map(([k, v]) => (
+                      <div key={k} className="truncate">
+                        <span className="text-slate-400">{k}:</span>{' '}
+                        <span className="text-slate-200 font-medium">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                <button
+                  onClick={() => toggleCompare(p)}
+                  className={`flex-1 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    isComparing
+                      ? 'bg-violet-600 text-white'
+                      : 'glass-panel hover:bg-[#111B35] text-slate-300 border border-slate-700'
+                  }`}
+                >
+                  <Scale className="w-3.5 h-3.5" />
+                  <span>{isComparing ? 'Comparing' : 'Compare'}</span>
+                </button>
+
+                <a
+                  href={p.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-xl glass-panel hover:bg-[#111B35] text-slate-400 hover:text-white border border-slate-700 transition-colors"
+                  title="Visit Product Page"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 2. SIDE-BY-SIDE COMPARISON MODAL */}
+      {showCompareModal && (
+        <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-3xl glass-panel border border-violet-500/40 shadow-2xl p-6 bg-[#080D1C]/95 space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-black text-white">Side-by-Side Product Benchmark</h3>
+                <p className="text-xs text-slate-400">Direct technical specs, price telemetry & sentiment contrast</p>
+              </div>
+              <button
+                onClick={() => setShowCompareModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Comparison Matrix Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800">
+                    <th className="p-3 text-slate-400 font-semibold">Attribute</th>
+                    {comparisonList.map((p) => (
+                      <th key={p.id} className="p-3 text-white font-bold text-sm">
+                        {p.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  <tr>
+                    <td className="p-3 text-slate-400 font-medium">Brand</td>
+                    {comparisonList.map((p) => (
+                      <td key={p.id} className="p-3 text-cyan-300 font-semibold">
+                        {p.brand}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-3 text-slate-400 font-medium">Price (USD)</td>
+                    {comparisonList.map((p) => (
+                      <td key={p.id} className="p-3 text-white font-mono font-bold text-sm">
+                        ${p.price.toFixed(2)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-3 text-slate-400 font-medium">Customer Rating</td>
+                    {comparisonList.map((p) => (
+                      <td key={p.id} className="p-3 text-amber-400 font-mono font-bold">
+                        ★ {p.rating} ({p.review_count.toLocaleString()})
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-3 text-slate-400 font-medium">Positive Sentiment</td>
+                    {comparisonList.map((p) => (
+                      <td key={p.id} className="p-3 text-emerald-400 font-mono font-bold">
+                        {p.sentiment_breakdown.positive}%
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-3 text-slate-400 font-medium">Direct Competitors</td>
+                    {comparisonList.map((p) => (
+                      <td key={p.id} className="p-3 text-slate-300">
+                        {p.competitors.join(', ')}
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowCompareModal(false)}
+                className="px-6 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs transition-colors"
+              >
+                Close Comparison
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
