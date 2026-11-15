@@ -198,6 +198,26 @@ def seed_database_defaults():
     # 1. CORE TRENDS
     trends_seed = [
         {
+            "id": "tr_gta6",
+            "name": "Grand Theft Auto VI (GTA VI)",
+            "category": "Gaming & Entertainment",
+            "country": "Global",
+            "volume": 1480000,
+            "growth_rate": 382.4,
+            "status": "rising",
+            "sentiment_score": 0.92,
+            "sentiment_label": "positive",
+            "confidence": 98.6,
+            "source_name": "YouTube Gaming, Google Trends & Reddit r/GTA6",
+            "source_url": "https://www.rockstargames.com/VI",
+            "collected_at": datetime.utcnow().isoformat(),
+            "description": "Massive global search interest explosion following official gameplay reveals, preorder announcements, and next-generation graphics benchmarks for Rockstar Games' GTA VI.",
+            "tags": ["GTA 6", "Gaming", "Rockstar Games", "Vice City", "Next-Gen Console"],
+            "image_url": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80",
+            "historical_data": get_historical_curve(180, 9.8, 30),
+            "is_live": 1
+        },
+        {
             "id": "tr_1",
             "name": "Local AI Hardware & Neural PCs",
             "category": "Artificial Intelligence",
@@ -213,6 +233,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Surge in consumer demand for PCs with dedicated NPUs capable of running quantized LLMs on-device without cloud subscriptions.",
             "tags": ["AI Hardware", "NPU", "Privacy Tech", "Edge AI"],
+            "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(120, 5.2, 30),
             "is_live": 1
         },
@@ -232,6 +253,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Wearable miniaturization shift from wrist smartwatches to non-intrusive titanium smart rings monitoring HRV and sleep stages.",
             "tags": ["Wearables", "HealthTech", "Sleep Quality"],
+            "image_url": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(90, 3.4, 30),
             "is_live": 1
         },
@@ -251,6 +273,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Rising backlash against disposable ultra-fast fashion with buyers shifting toward durable secondhand capsules and circular repairs.",
             "tags": ["Sustainability", "Circular Fashion", "Declining"],
+            "image_url": "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(180, -2.8, 30),
             "is_live": 1
         },
@@ -270,6 +293,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Hyperlocal dark-store networks replacing traditional weekly supermarket trips across tier-1 and tier-2 Indian metro hubs.",
             "tags": ["Quick Commerce", "India", "Hyperlocal", "Retail"],
+            "image_url": "https://images.unsplash.com/photo-1526367790999-0150786686a2?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(140, 8.5, 30),
             "is_live": 1
         },
@@ -289,6 +313,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Sparkling herbal tonics enriched with lion's mane, ashwagandha, and magnesium replacing traditional energy drinks.",
             "tags": ["Beverages", "Wellness", "Nootropics"],
+            "image_url": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(80, 2.8, 30),
             "is_live": 1
         },
@@ -308,6 +333,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Consumer retention plateauing due to ergonomic headset weight, motion fatigue, and software library exhaustion.",
             "tags": ["VR", "XR", "Gaming", "Plateau"],
+            "image_url": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(130, -1.1, 30),
             "is_live": 1
         },
@@ -327,6 +353,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Surging adoption of residential LFP modular battery packs paired with rooftop solar to hedge against peak electricity tariffs.",
             "tags": ["Energy Storage", "Solar", "CleanTech", "EU"],
+            "image_url": "https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(95, 4.2, 30),
             "is_live": 1
         },
@@ -346,6 +373,7 @@ def seed_database_defaults():
             "collected_at": datetime.utcnow().isoformat(),
             "description": "Right-to-repair movement gaining momentum with modular handsets featuring screw-free swappable batteries and camera modules.",
             "tags": ["RightToRepair", "Hardware", "Smartphones"],
+            "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
             "historical_data": get_historical_curve(85, 0.9, 30),
             "is_live": 1
         }
@@ -356,17 +384,35 @@ def seed_database_defaults():
         INSERT INTO trends (
             id, name, category, country, volume, growth_rate, status,
             sentiment_score, sentiment_label, confidence, source_name, source_url,
-            collected_at, description, tags, historical_data, is_live
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            collected_at, description, tags, historical_data, image_url, is_live
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             t["id"], t["name"], t["category"], t["country"], t["volume"],
             t["growth_rate"], t["status"], t["sentiment_score"], t["sentiment_label"],
             t["confidence"], t["source_name"], t["source_url"], t["collected_at"],
-            t["description"], json.dumps(t["tags"]), json.dumps(t["historical_data"]), t["is_live"]
+            t["description"], json.dumps(t["tags"]), json.dumps(t["historical_data"]),
+            t.get("image_url", ""), t["is_live"]
         ))
 
     # 2. PRODUCT INTELLIGENCE
     products_seed = [
+        {
+            "id": "prod_gta6",
+            "name": "Grand Theft Auto VI (Standard & Deluxe)",
+            "brand": "Rockstar Games",
+            "category": "Gaming & Software",
+            "price": 69.99,
+            "currency": "USD",
+            "rating": 4.9,
+            "review_count": 52400,
+            "popularity_score": 99,
+            "growth_rate": 382.4,
+            "competitors": ["Cyberpunk 2077", "Red Dead Redemption 2", "Elder Scrolls VI"],
+            "sentiment_breakdown": {"positive": 92, "neutral": 6, "negative": 2},
+            "specs": {"Target Hardware": "PS5, Xbox Series X, PC", "Graphics Engine": "RAGE 9 Ultra", "World Scale": "Leonida / Vice City Expanded", "Multiplayer": "GTA Online 2.0"},
+            "image_url": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80",
+            "source_url": "https://www.rockstargames.com/VI"
+        },
         {
             "id": "prod_1",
             "name": "AuraRing Horizon Gen-4",
@@ -381,6 +427,7 @@ def seed_database_defaults():
             "competitors": ["Ultrahuman Ring Air", "Samsung Galaxy Ring", "Whoop 4.0"],
             "sentiment_breakdown": {"positive": 78, "neutral": 14, "negative": 8},
             "specs": {"Battery Life": "7 Days", "Water Resistance": "100m", "Material": "Grade 5 Titanium", "Sensors": "PPG, NTC Temp, 3D Accel"},
+            "image_url": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
             "source_url": "https://ouraring.com"
         },
         {
@@ -397,6 +444,7 @@ def seed_database_defaults():
             "competitors": ["Mac Mini M4", "Beelink SER8", "Minisforum UM790"],
             "sentiment_breakdown": {"positive": 82, "neutral": 12, "negative": 6},
             "specs": {"NPU Tops": "48 TOPS", "RAM": "32GB LPDDR5X", "Storage": "1TB NVMe Gen4", "Power": "65W USB-C PD"},
+            "image_url": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=800&q=80",
             "source_url": "https://zenithcompute.tech"
         },
         {
@@ -413,6 +461,7 @@ def seed_database_defaults():
             "competitors": ["Sony WF-1000XM5", "Apple AirPods Pro 2", "Bose QC Ultra"],
             "sentiment_breakdown": {"positive": 71, "neutral": 18, "negative": 11},
             "specs": {"Noise Cancellation": "48dB Hybrid ANC", "Driver": "11mm Planar Magnetic", "Codecs": "LDAC, LC3, AAC", "Case Battery": "36 Hours"},
+            "image_url": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80",
             "source_url": "https://sonicwave.audio"
         },
         {
@@ -429,6 +478,7 @@ def seed_database_defaults():
             "competitors": ["Allbirds Tree Runner", "On Cloudtilt", "Veja Campo"],
             "sentiment_breakdown": {"positive": 75, "neutral": 17, "negative": 8},
             "specs": {"Upper Material": "100% Recycled Ocean PET", "Midsole": "Sugar-cane Bio-Foam", "Biodegradable": "Yes (Industrial)", "Carbon Footprint": "4.2kg CO2e"},
+            "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
             "source_url": "https://terraloom.eco"
         },
         {
@@ -445,6 +495,7 @@ def seed_database_defaults():
             "competitors": ["Anker Prime 140W", "Baseus Blade", "Ugreen Nexode Pro"],
             "sentiment_breakdown": {"positive": 88, "neutral": 8, "negative": 4},
             "specs": {"Architecture": "GaN V-Fast", "Ports": "3x USB-C + 1x USB-A", "Display": "Real-time Wattage OLED", "Thermal": "Dynamic Thermal Guard 2.0"},
+            "image_url": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80",
             "source_url": "https://voltpulse.power"
         }
     ]
@@ -454,13 +505,13 @@ def seed_database_defaults():
         INSERT INTO products (
             id, name, brand, category, price, currency, rating,
             review_count, popularity_score, growth_rate, competitors,
-            sentiment_breakdown, specs, source_url
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            sentiment_breakdown, specs, image_url, source_url
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             p["id"], p["name"], p["brand"], p["category"], p["price"], p["currency"],
             p["rating"], p["review_count"], p["popularity_score"], p["growth_rate"],
             json.dumps(p["competitors"]), json.dumps(p["sentiment_breakdown"]),
-            json.dumps(p["specs"]), p["source_url"]
+            json.dumps(p["specs"]), p.get("image_url", ""), p["source_url"]
         ))
 
     # 3. SENTIMENT RECORDS

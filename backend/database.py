@@ -38,6 +38,7 @@ def init_db():
         description TEXT,
         tags TEXT, -- JSON array
         historical_data TEXT, -- JSON array of {date, value}
+        image_url TEXT,
         is_live INTEGER DEFAULT 1
     );
     """)
@@ -58,6 +59,7 @@ def init_db():
         competitors TEXT, -- JSON array
         sentiment_breakdown TEXT, -- JSON object
         specs TEXT, -- JSON object
+        image_url TEXT,
         source_url TEXT
     );
     """)

@@ -22,6 +22,7 @@ export interface Trend {
   description: string;
   tags: string[];
   historical_data: HistoricalPoint[];
+  image_url?: string;
   is_live?: number;
   anomalies?: AnomalyPoint[];
   forecast?: ForecastData;
@@ -70,6 +71,7 @@ export interface Product {
   };
   specs: Record<string, string>;
   source_url: string;
+  image_url?: string;
 }
 
 export interface SentimentComplaint {

@@ -18,7 +18,7 @@ import { Trend } from './types';
 
 export function App() {
   const [activePage, setActivePage] = useState<string>('home');
-  const [isLightMode, setIsLightMode] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [currentCountry, setCurrentCountry] = useState<string>('Global');
   const [currentDateRange, setCurrentDateRange] = useState<string>('30d');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
@@ -27,12 +27,12 @@ export function App() {
 
   // Sync theme to root class
   useEffect(() => {
-    if (isLightMode) {
-      document.documentElement.classList.add('light');
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark-navy');
     } else {
-      document.documentElement.classList.remove('light');
+      document.documentElement.classList.remove('dark-navy');
     }
-  }, [isLightMode]);
+  }, [isDarkMode]);
 
   // Global keyboard shortcut for search (Ctrl+K or Cmd+K)
   useEffect(() => {
@@ -53,7 +53,7 @@ export function App() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-[#080D1C] text-[#F7F9FF] flex flex-col antialiased transition-colors">
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col antialiased transition-colors">
         <div className="flex flex-1">
           {/* Main Sidebar */}
           <Sidebar
@@ -71,8 +71,8 @@ export function App() {
               onSelectCountry={setCurrentCountry}
               currentDateRange={currentDateRange}
               onSelectDateRange={setCurrentDateRange}
-              isLightMode={isLightMode}
-              onToggleTheme={() => setIsLightMode(!isLightMode)}
+              isLightMode={!isDarkMode}
+              onToggleTheme={() => setIsDarkMode(!isDarkMode)}
               onOpenSearch={() => setIsSearchOpen(true)}
               onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
               onNavigatePage={(p) => setActivePage(p)}
@@ -109,8 +109,8 @@ export function App() {
               {activePage === 'reports' && <ReportsPage />}
               {activePage === 'settings' && (
                 <SettingsPage
-                  isLightMode={isLightMode}
-                  onToggleTheme={() => setIsLightMode(!isLightMode)}
+                  isLightMode={!isDarkMode}
+                  onToggleTheme={() => setIsDarkMode(!isDarkMode)}
                   onNavigateHome={() => setActivePage('home')}
                 />
               )}

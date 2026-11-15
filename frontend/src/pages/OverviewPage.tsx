@@ -81,10 +81,10 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => onNavigate('products')}
-            className="px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+            className="px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
           >
-            <Box className="w-3.5 h-3.5 text-cyan-400 animate-spin-slow" />
-            <span>3D Products</span>
+            <Box className="w-3.5 h-3.5 text-blue-600 animate-spin-slow" />
+            <span>Product Intelligence</span>
           </button>
 
           <button

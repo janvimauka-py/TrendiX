@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
 }) => {
   const navItems = [
-    { id: 'home', label: 'Home / Showcase', icon: Globe, badge: '3D' },
+    { id: 'home', label: 'Home / Showcase', icon: Globe },
     { id: 'overview', label: 'Main Overview', icon: LayoutDashboard },
     { id: 'radar', label: 'Global Trend Radar', icon: Radio, highlight: true },
     { id: 'products', label: 'Product Intelligence', icon: ShoppingBag },
